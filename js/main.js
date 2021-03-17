@@ -1,3 +1,4 @@
+//Initialize
 const config = {
     apiKey: "AIzaSyDbE43EtFgQ8K8H42uFBQLdG6903_d4hhw",
     authDomain: "aidxier-19a98.firebaseapp.com",
@@ -8,18 +9,30 @@ const config = {
 }
 
 firebase.initializeApp(config);
-
 const firestore = firebase.firestore();
 
-//Create Account Form for Patients
-const signUpFormPatient = document.querySelector("#signUpFormPatient");
+//Create Account Form for Patients And Doctors
+const signUpForm = document.querySelector("#signUpForm");
 const progressBar = document.querySelector("#progressBar");
 const progressHandler = document.querySelector("#progressHandler");
 const postSubmit = document.querySelector("#postSubmit");
 
-if(signUpFormPatient != null){
+//Change Title and Keywords
+if(document.querySelector("#signUpTitle") != null){
+    var id = window.location.href.split('?').pop();
+    let signUpTitle = document.querySelector("#signUpTitle");
+    var title = "SIGN UP AS ";
+    title += (id == "Patient") ? "PATIENT" : "MEDICAL PRACTICIONER";
+    signUpTitle.textContent = title;
+    if(id != "Patient"){
+        document.querySelector("#recordInputText").textContent = "Medical Practitioner Certificate";
+    }
+}
+
+if(signUpForm != null){
     let d;
-    signUpFormPatient.addEventListener("submit", async(e)=>{
+    var accountType = window.location.href.split('?').pop();
+    signUpForm.addEventListener("submit", async(e)=>{
         e.preventDefault(); //Prevent refresh
 
         //Validation
@@ -75,15 +88,21 @@ if(signUpFormPatient != null){
                 name,
                 email,
                 contact,
+                accountType,
                 record: d,
                 fileref: fileRef.toString()
             }
 
-            await firebase.firestore().collection("patient-accounts").add(post);
-            console.log("PATIENT ACCOUNT CREATED");
+            if(accountType == "Patient"){
+                await firebase.firestore().collection("patient-accounts").add(post);
+            }
+            else{
+                await firebase.firestore().collection("doc-accounts").add(post);
+            }
+            console.log("ACCOUNT CREATED");
 
             if(postSubmit != null){
-                location.reload();
+                window.location.replace("login.html?"+accountType);
                 postSubmit.disabled = false;
             }
         }
@@ -94,5 +113,3 @@ if(signUpFormPatient != null){
         }
     })
 }
-
-//Create Account form for Medical Practitioner
