@@ -1,6 +1,4 @@
-// HI AID
 
-//Initialize
 const config = {
   apiKey: 'AIzaSyDbE43EtFgQ8K8H42uFBQLdG6903_d4hhw',
   authDomain: 'aidxier-19a98.firebaseapp.com',
