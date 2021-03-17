@@ -12,42 +12,24 @@
 
     <!--MAIN CSS-->
     <link href="stylesheets/main.css" rel="stylesheet" type="text/css"/>
+
+    <!--INDEX CSS-->
+    <link href="stylesheets/index.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-    <!--NAVBAR-->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">AIDXier</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
-                </ul>
+    <div class="d-flex justify-content-center text-center">
+        <div class="card" style="width: 20rem;">
+            <div class="card-header">
+                <h1 class="card-title">AIDXier</h1>
             </div>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="pages/login.html">Login</a>
-                </li>
-            </ul>
+            <div class="card-body">
+                <h5 class="card-title">Are you a:</h5>
+                <a href="pages/login.html" class="btn btn-primary">Patient</a><br><br>
+                <a href="pages/login.html" class="btn btn-primary">Medical Practitioner</a>
+            </div>
         </div>
-    </nav>
-    
+    </div>
+
     <!--SCRIPTS-->
     <!--FIREBASE-->
     <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>

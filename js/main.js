@@ -28,6 +28,7 @@ if(signUpFormPatient != null){
             let email = document.getElementById("emailInput").value;
             let contact = document.getElementById("contactInput").value;
             let record = document.getElementById("recordInput").files[0];
+            progressHandler.style.display = "block";
             console.log(record);
 
             const storageRef = firebase.storage().ref();
