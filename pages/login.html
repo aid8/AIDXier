@@ -37,52 +37,15 @@
     </div>
     
     <div class = "d-flex justify-content-center my-10">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signUpFormPatient">
-            Create Account
-        </button>
+        <a href="#" id="createAccBtn" onclick="return createAccBtn()" class="btn btn-primary">Create Acccount</a>
+        <script>
+            function createAccBtn(){
+                var loc = "signup.html?"+ window.location.href.split('?').pop()
+                document.getElementById("createAccBtn").href = loc;
+            }
+        </script>
     </div>
     
-    <!--CREATE ACCOUNT FORM MODAL (PATIENT)-->
-    <!--OKAY LANG NA MODAL NI OR DAPAT SEPARATE PAGE???-->
-    <div class="modal fade" id="signUpFormPatient" tabindex="-1" aria-labelledby="signUpFormPatientLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="POST" id="signUpFormPatient">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="signUpFormPatientLabel">Create Account</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="nameInput" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="nameInput" placeholder="Last Name, First Name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="emailInput" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="emailInput" placeholder="name@example.com">
-                        </div>
-                        <div class="mb-3">
-                            <label for="contactInput" class="form-label">Contact Number</label>
-                            <input type="text" class="form-control" id="contactInput">
-                        </div>
-                        <div class="mb-3">
-                            <label for="recordInput" class="form-label">Medical Record File</label><br>
-                            <input type="file" class="form-control-file" id="recordInput">
-                        </div>
-                        <div id="progressHandler" style="display: none;">
-                            <p>Uploading File, Please wait!</p>
-                            <progress id="progressBar" value="" max="100"></progress>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" id = "postSubmit" class="btn btn-primary">Create Account</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!--SCRIPTS-->
     <!--FIREBASE-->
     <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>
