@@ -24,15 +24,14 @@
                 <h1 class="card-title">LOGIN</h1>
             </div>
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                <label for="emailInput" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="emailInput" aria-describedby="emailHelp">
             </div>
             <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1">
+                <label for="passwordInput" class="form-label">Password</label>
+                <input type="password" class="form-control" id="passwordInput">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" id="postSubmit" class="btn btn-primary">Login</button>
         </form>
     </div>
     
@@ -40,7 +39,7 @@
         <a href="#" id="createAccBtn" onclick="return createAccBtn()" class="btn btn-primary">Create Acccount</a>
         <script>
             function createAccBtn(){
-                var loc = "signup.html?"+ window.location.href.split('?').pop()
+                let loc = "signup.html?"+ window.location.href.split('?').pop()
                 document.getElementById("createAccBtn").href = loc;
             }
         </script>
@@ -50,9 +49,10 @@
     <!--FIREBASE-->
     <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-storage.js"></script>
 
     <!--MAIN-->
-    <script src="../js/main.js"></script>
+    <script type="module" src="../js/main.js"></script>
 </body>
 </html>
