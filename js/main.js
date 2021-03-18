@@ -1,3 +1,8 @@
+/*TODO:
+  = CHECK ALL FIELDS IN SIGN UP IS FILLED UP AND ADD NOTIFICATION TO USER
+  = ADD NOTIFICATION IN LOGIN
+*/
+
 const config = {
   apiKey: 'AIzaSyDbE43EtFgQ8K8H42uFBQLdG6903_d4hhw',
   authDomain: 'aidxier-19a98.firebaseapp.com',
@@ -7,10 +12,10 @@ const config = {
   appId: '1:385746246531:web:dcfb7e8d9ea77d056634b6',
 };
 
-//Initialize firebase
 firebase.initializeApp(config);
 const firestore = firebase.firestore();
 
+//----------GLOBAL VARIABLES----------//
 const signUpForm = document.querySelector('#signUpForm');
 const loginForm = document.querySelector('#loginForm')
 const logoutBtn = document.querySelector('#logoutBtn');
@@ -18,19 +23,10 @@ const postSubmit = document.querySelector('#postSubmit');
 const progressBarForm = document.querySelector('#progressBarForm');
 const progressHandlerForm = document.querySelector('#progressHandlerForm');
 
-//Change Title and Keywords
-if (document.querySelector('#signUpTitle') != null) {
-  let id = window.location.href.split('?').pop();
-  let signUpTitle = document.querySelector('#signUpTitle');
-  let title = 'SIGN UP AS ';
-  title += id == 'Patient' ? 'PATIENT' : 'MEDICAL PRACTICIONER';
-  signUpTitle.textContent = title;
-  if (id != 'Patient') {
-    document.querySelector('#recordInputText').textContent = 'Medical Practitioner Certificate';
-  }
-}
+const titleSignUp = document.querySelector('#titleSignUp');
+const userNameHomepage = document.querySelector('#userNameHomepage');
 
-//USERS SIGN UP 
+//----------USERS SIGN UP----------//
 if (signUpForm != null) {
   let d, uid;
   const accountType = window.location.href.split('?').pop();
@@ -44,7 +40,7 @@ if (signUpForm != null) {
     let auth = firebase.auth();
     let fieldsOk = true;
     
-    //TODO : CHECK IF IT IS REAL EMAIL AND ALL FIELDS ARE OK
+    //TODO : CHECK IF ALL FIELDS ARE OK
     if(fieldsOk){
       //Show Progess Bar
       progressHandlerForm.style.display = 'block';
@@ -102,7 +98,7 @@ if (signUpForm != null) {
 
         //After a success sign up, go to homepage
         if (postSubmit != null) {
-          gotoPage(accountType, "homepage");
+          gotoPage("homepage", accountType);
           postSubmit.disabled = false;
         }
       })
@@ -120,51 +116,115 @@ if (signUpForm != null) {
   });
 }
 
-//USERS LOG IN
+//----------USERS LOG IN----------//
 if(loginForm != null){
   loginForm.addEventListener('submit', async(e) =>{
     e.preventDefault(); //Prevent refresh
     let email = document.getElementById('emailInput').value;
     let pass = document.getElementById('passwordInput').value;
     let auth = firebase.auth();
-    
+
     //Sign in
     auth.signInWithEmailAndPassword(email, pass)
+    .then(async(user) => {
+      gotoPage("homepage", getUserType());
+    })
     //if account not found
     .catch(function(ce){
       console.log(ce.message);
     });
-
-    //get accounttype in firestore (change below)
-    const accountType = window.location.href.split('?').pop();
-    gotoPage(accountType, "homepage");
   });
 }
 
-function gotoPage(accountType, page){
+//----------CHANGE DATA ACC TO USER OR ACC----------//
+//=====SIGNUP FORMS====//
+if (titleSignUp != null) {
+  let id = window.location.href.split('?').pop();
+  let title = 'SIGN UP AS ';
+  title += id == 'Patient' ? 'PATIENT' : 'MEDICAL PRACTICIONER';
+  titleSignUp.textContent = title;
+  if (id != 'Patient') {
+    document.querySelector('#recordInputText').textContent = 'Medical Practitioner Certificate';
+  }
+}
+
+//=====HOMEPAGE FORMS====//
+if(logoutBtn != null){
+  logoutBtn.addEventListener('click', e=>{
+    firebase.auth().signOut();
+    gotoPage("index");
+  });
+}
+
+//Add here codes that needs await
+async function changePageDetails(){
+  if (userNameHomepage != null){
+    let userData = await getUserData();
+    userNameHomepage.textContent = "Welcome " + userData.name;
+  }
+}
+changePageDetails();
+
+
+//----------FUNCTIONS----------//
+function gotoPage(page, accountType){
   let homepageURL = (accountType == 'Patient') ? "patient/" : "medical-practitioner/";
   switch(page){
     case "homepage":
-      window.location.replace(homepageURL+page+".html");
+      window.location.replace("/pages/"+homepageURL+page+".html");
     break;
 
-    case "test":
-
+    case "index":
+      window.location.replace("/index.html");
     break;
 
     default:
   }
 }
 
-if(logoutBtn != null){
-  //firebase.auth().signOut();
+function getUserType(){
+  let accountType = window.location.href.split('?').pop();
+  //Just Incase if accountType is not present find the account manually
+  if(accountType == "Patient" || accountType == "Doc"){
+    return accountType;
+  }
+  return new Promise(resolve =>{
+    firebase.auth().onAuthStateChanged(async (user) =>{
+      firestore.collection("doc-accounts-info").doc(user.uid).get().then((doc)=>{
+        if(doc.exists){
+          resolve(doc.data().accountType);
+        }
+      });
+      firestore.collection("patient-accounts-info").doc(user.uid).get().then((doc)=>{
+        if(doc.exists){
+          resolve(doc.data().accountType);
+        }
+      });
+    });
+  });
 }
 
-//A realtime listener firebase
-firebase.auth().onAuthStateChanged(firebaseUser =>{
-  if(firebaseUser){
-    console.log("logged in" + firebaseUser);
-    //logoutBtn.classList.remove('hide');
+function getUserData(){
+  let collection;
+  return new Promise(resolve =>{
+    firebase.auth().onAuthStateChanged(async(user) =>{
+      if(user){
+        collection = (await getUserType() == "Patient") ? "patient" : "doc";
+        console.log(collection);
+        firestore.collection(collection+"-accounts-info").doc(user.uid).get().then((doc)=>{
+          if(doc.exists){
+            resolve(doc.data());
+          }
+        });
+      }
+    });
+  });
+}
+
+//----------FIREBASE REALTIME LISTENER----------//
+firebase.auth().onAuthStateChanged(user =>{
+  if(user){
+    console.log("logged in" + user.uid);
   }
   else{
     console.log("not logged in");
