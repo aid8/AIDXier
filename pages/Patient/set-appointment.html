@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIDXier</title>
+
+    <!--BOOTSTRAP-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+    <!--MAIN CSS-->
+    <link href="/stylesheets/main.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+    <!--NAVBAR-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">AIDXier</a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="homepage.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!--BACK BUTTON-->
+    <a href="/pages/patient/homepage.html" class="btn btn-primary">&#60;</a>
+
+    <!--MENU-->
+    <div class = "container my-5" style="width: 40rem;">
+        <h3>Google Calendar</h3>
+        
+        <!--ADD GOOGLE CALENDAR SIGN IN AND IFRAME HERE-->
+        <hr><div id="googleCalSignIn">
+            <div class="d-flex justify-content-center my-10"> 
+                <h6>You need to sign in to your google to show events.</h6>
+            </div>
+            <div class = "d-flex justify-content-center my-10">
+                <button class="btn btn-info" id="setAppointmentSubmitBtn">Sign-in</button>
+            </div>
+        </div><hr>
+
+        <form method="POST" id = "setAppointmentForm">
+            <div class="mb-3">
+                <label for="dateInput" class="form-label">Date and Time</label>
+                <input type="text" class="form-control" id="dateInput">
+            </div>
+            <div class="mb-3">
+                <label for="symptomInput" class="form-label">Symptom</label>
+                <textarea id="symptomInput" rows="5" cols="85"></textarea>
+            </div>
+            <div class = "d-flex justify-content-center my-10">
+                <button type="submit" class="btn btn-info" id="setAppointmentSubmitBtn">Submit</button>
+            </div>
+        </form>
+
+        </div>
+    </div>
+
+    <!--SCRIPTS-->
+    <!--FIREBASE-->
+    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-storage.js"></script>
+
+    <!--MAIN-->
+    <script type="module" src="/js/main.js"></script>
+</body>
+</html>

@@ -1,6 +1,8 @@
 /*TODO:
   = CHECK ALL FIELDS IN SIGN UP IS FILLED UP AND ADD NOTIFICATION TO USER
   = ADD NOTIFICATION IN LOGIN
+  = ADD GOOGLE CALENDAR API
+  = ADD GOOGLE MAP API
 */
 
 const config = {
@@ -10,6 +12,17 @@ const config = {
   storageBucket: 'aidxier-19a98.appspot.com',
   messagingSenderId: '385746246531',
   appId: '1:385746246531:web:dcfb7e8d9ea77d056634b6',
+};
+
+const googleCalConfig ={
+    // Client ID and API key from the Developer Console
+    CLIENT_ID: '998172243350-5vsbb7ifb30drpcvmhp0qtp6b3a2oogp.apps.googleusercontent.com',
+    API_KEY: 'AIzaSyBjN4VfHYNYr2ofChNHvnHR8jbmUZM5uLo',
+    // Array of API discovery doc URLs for APIs used by the quickstart
+    DISCOVERY_DOCS: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+    // Authorization scopes required by the API; multiple scopes can be
+    // included, separated by spaces.
+    SCOPES: "https://www.googleapis.com/auth/calendar"
 };
 
 firebase.initializeApp(config);
@@ -25,14 +38,29 @@ const progressHandlerForm = document.querySelector('#progressHandlerForm');
 
 const titleSignUp = document.querySelector('#titleSignUp');
 const userNameHomepage = document.querySelector('#userNameHomepage');
+const userInfoHomepage = document.querySelector('#userInfoHomepage');
+const patientRecordPage = document.querySelector('#patientRecord');
 
 //----------USERS SIGN UP----------//
 if (signUpForm != null) {
   let d, uid;
   const accountType = window.location.href.split('?').pop();
+
+  //Hide Info of Doctors sign up in patients sign up
+  if(accountType == "Patient"){
+    let clinicNameDiv = document.querySelector('#clinicNameInputDiv');
+    let clinicAddressDiv = document.querySelector('#clinicAddressInputDiv');
+    clinicNameDiv.style.display = 'none';
+    clinicAddressDiv.style.display = 'none';
+  }
+
   signUpForm.addEventListener('submit', async (e) => {
     e.preventDefault(); //Prevent refresh
     let name = document.getElementById('nameInput').value;
+    let age = document.getElementById('ageInput').value;
+    let gender = (document.getElementById('genderMaleInput').value == "male") ? "Male" : "Female";
+    let clinicName = document.getElementById('clinicNameInput').value;
+    let clinicAddress = document.getElementById('clinicAddressInput').value;
     let email = document.getElementById('emailInput').value;
     let pass = document.getElementById('passwordInput').value;
     let contact = document.getElementById('contactInput').value;
@@ -83,6 +111,8 @@ if (signUpForm != null) {
         let accountInfo = {
           uid,
           name,
+          age,
+          gender,
           contact,
           accountType,
           record: d,
@@ -93,6 +123,8 @@ if (signUpForm != null) {
           await firebase.firestore().collection('patient-accounts-info').doc(uid).set(accountInfo);
         } 
         else{
+          accountInfo["clinicName"] = clinicName;
+          accountInfo["clinicAddress"] = clinicAddress;
           await firebase.firestore().collection('doc-accounts-info').doc(uid).set(accountInfo);
         }
 
@@ -126,7 +158,21 @@ if(loginForm != null){
 
     //Sign in
     auth.signInWithEmailAndPassword(email, pass)
-    .then(async(user) => {
+    .then(async(userAuth) => {
+      let collection;
+      let data = await new Promise(resolve =>{
+        firebase.auth().onAuthStateChanged(async(user) =>{
+          if(user){
+            collection = (await getUserType() == "Patient") ? "patient" : "doc";
+            firestore.collection(collection+"-accounts-info").doc(user.uid).get().then((doc)=>{
+              if(doc.exists){
+                resolve(doc.data());
+              }
+            });
+          }
+        });
+      });
+      storeData(data);
       gotoPage("homepage", getUserType());
     })
     //if account not found
@@ -152,19 +198,11 @@ if (titleSignUp != null) {
 if(logoutBtn != null){
   logoutBtn.addEventListener('click', e=>{
     firebase.auth().signOut();
+    sessionStorage.clear();
     gotoPage("index");
   });
 }
-
-//Add here codes that needs await
-async function changePageDetails(){
-  if (userNameHomepage != null){
-    let userData = await getUserData();
-    userNameHomepage.textContent = "Welcome " + userData.name;
-  }
-}
 changePageDetails();
-
 
 //----------FUNCTIONS----------//
 function gotoPage(page, accountType){
@@ -182,43 +220,83 @@ function gotoPage(page, accountType){
   }
 }
 
+//Only showing the current link
+function getCurrentPage(){
+  let loc = window.location.href;
+  console.log(loc);
+}
+
+function userLoggedIn(){
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      return true;
+    }
+  });
+  return false;
+}
+
 function getUserType(){
   let accountType = window.location.href.split('?').pop();
   //Just Incase if accountType is not present find the account manually
   if(accountType == "Patient" || accountType == "Doc"){
     return accountType;
   }
-  return new Promise(resolve =>{
-    firebase.auth().onAuthStateChanged(async (user) =>{
-      firestore.collection("doc-accounts-info").doc(user.uid).get().then((doc)=>{
-        if(doc.exists){
-          resolve(doc.data().accountType);
-        }
-      });
-      firestore.collection("patient-accounts-info").doc(user.uid).get().then((doc)=>{
-        if(doc.exists){
-          resolve(doc.data().accountType);
-        }
-      });
-    });
-  });
+  return sessionStorage.getItem("accountType");
+}
+
+//store data in storageSession for faster loading time
+function storeData(accountInfo){
+  sessionStorage.setItem("name", accountInfo.name);
+  sessionStorage.setItem("age", accountInfo.age);
+  sessionStorage.setItem("gender", accountInfo.gender);
+  sessionStorage.setItem("contact", accountInfo.contact);
+  sessionStorage.setItem("accountType", accountInfo.accountType);
+  sessionStorage.setItem("record", accountInfo.record);
+  if(accountInfo.accountType == "Doc"){
+    sessionStorage.setItem("clinicName", accountInfo.clinicName);
+    sessionStorage.setItem("clinicAddress", accountInfo.clinicAddress);
+  }
 }
 
 function getUserData(){
-  let collection;
-  return new Promise(resolve =>{
-    firebase.auth().onAuthStateChanged(async(user) =>{
-      if(user){
-        collection = (await getUserType() == "Patient") ? "patient" : "doc";
-        console.log(collection);
-        firestore.collection(collection+"-accounts-info").doc(user.uid).get().then((doc)=>{
-          if(doc.exists){
-            resolve(doc.data());
-          }
-        });
+  let accountInfo = {};
+  accountInfo.name = sessionStorage.getItem("name");
+  accountInfo.age = sessionStorage.getItem("age");
+  accountInfo.gender = sessionStorage.getItem("gender");
+  accountInfo.contact = sessionStorage.getItem("contact");
+  accountInfo.accountType = sessionStorage.getItem("accountType");
+  accountInfo.record = sessionStorage.getItem("record");
+  if(accountInfo.accountType == "Doc"){
+    accountInfo.clinicName = sessionStorage.getItem("clinicName");
+    accountInfo.clinicAddress = sessionStorage.getItem("clinicAddress");
+  }
+  return accountInfo;
+}
+
+async function changePageDetails(){
+  if(userLoggedIn){
+    let userData = await getUserData();
+    let accountType = await getUserType();
+    //Homepage
+    if(userNameHomepage != null){
+      userNameHomepage.textContent = userData.name;
+
+      if(accountType == "Patient"){
+        userInfoHomepage.textContent = userData.age + ", " + userData.gender;
       }
-    });
-  });
+      else{
+        userInfoHomepage.textContent = userData.clinicName + ", " + userData.clinicAddress;
+      }
+    }
+
+    //MedicalRecordsPage
+    if(patientRecordPage != null){
+      patientRecordPage.style.backgroundRepeat = "no-repeat";
+      patientRecordPage.style.backgroundSize = "100% 100%";
+      patientRecordPage.style.backgroundImage = "url(" + userData.record + ")";
+      console.log( "url(" + userData.record + ")");
+    }
+  }
 }
 
 //----------FIREBASE REALTIME LISTENER----------//
@@ -228,6 +306,5 @@ firebase.auth().onAuthStateChanged(user =>{
   }
   else{
     console.log("not logged in");
-    //logoutBtn.classList.add('hide');
   }
 });

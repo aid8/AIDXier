@@ -23,42 +23,40 @@
     <link href="/stylesheets/main.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <!--NAVBAR-->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">AIDXier</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Contact</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">About</a>
-            </li>
-          </ul>
+      <!--NAVBAR-->
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">AIDXier</a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="homepage.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">About</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
     </nav>
 
+    <!--MENU-->
     <section class="main-menu">
       <div class="container">
         <div class="row patient-info">
           <h1 id="userNameHomepage">Medical Practitioner</h1>
-          <h6>clinic, address, etc</h6>
+          <h6 id="userInfoHomepage">clinic, address, etc</h6>
         </div>
       </div>
 
@@ -66,9 +64,7 @@
         <div class="row menu-items">
           <button class="btn btn-info">Scheduled Appointments</button>
           <button class="btn btn-info">View Previous Appointments</button>
-
           <button class="btn btn-danger">EMERGENCY CONTACT NUMBER</button>
-
           <button class="btn btn-info" id="logoutBtn">Logout</button>
         </div>
       </div>
