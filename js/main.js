@@ -54,6 +54,7 @@ const googleCalEventDiv = document.querySelector('#googleCalEventDiv');
 const setAppointmentSubmitBtn = document.querySelector('#setAppointmentSubmitBtn');
 const pendingAppointmentDiv = document.querySelector('#pendingAppointmentDiv');
 const browseClinicsDiv = document.querySelector('#browseClinicsDiv');
+const previousAppointmentsDiv = document.querySelector('#previousAppointmentsDiv');
 
 //----------USERS SIGN UP----------//
 if (signUpForm != null) {
@@ -404,7 +405,7 @@ function changePageDetails(){
           appointmentSymptomPendingPar.innerHTML = "Symptom: " + userData.appointments[0].symptom;
           if(userData.appointments[0].viewed){
             let approved = userData.appointments[0].approved;
-            pendingStatusTitle.innerHTML = "Response Recived: " + (approved ? 'Approved' : 'Rejected');
+            pendingStatusTitle.innerHTML = "Response Recived: " + (approved ? 'Approved' : 'Declined');
             responseDetailsPar.innerHTML = "Details: " + userData.appointments[0].details;
             appointmentPendingBtn.innerHTML = (approved ? '' : 'Close');
             appointmentPendingBtn.style.display = (approved ? 'none' : 'block');
@@ -425,6 +426,8 @@ function changePageDetails(){
           var divCard = document.createElement('div');
           var divCardBody = document.createElement('div');
           var pCardBody = document.createElement('p');
+          var breakLine = document.createElement('br');
+
           pCardBody.innerHTML = doctor.name + " / " + doctor.clinicName;
           divCard.className = "card";
           divCardBody.className = "card-body";
@@ -434,13 +437,13 @@ function changePageDetails(){
           divCardBody.insertAdjacentHTML('beforeEnd','<a class="card-link" data-bs-toggle="modal" data-bs-target="#clinicDetailModal" data-bs-index="' + i +'">More Details</a>');
           divCard.appendChild(divCardBody);
           browseClinicsDiv.appendChild(divCard);
+          browseClinicsDiv.appendChild(breakLine);
         });
 
         var clinicDetailModal = document.getElementById('clinicDetailModal')
         clinicDetailModal.addEventListener('show.bs.modal', function (event) {
-          console.log("?");
           // Button that triggered the modal
-          var button = event.relatedTarget
+          var button = event.relatedTarget;
           // Extract info from data-bs-* attributes
           var index = button.getAttribute('data-bs-index');
           var selectedDoctor = doctors[index];
@@ -450,6 +453,47 @@ function changePageDetails(){
           modalTitle.textContent = selectedDoctor.clinicName;
           modalBodyInput.innerHTML = "Doctor: " + selectedDoctor.name + "<br/>Address: " + selectedDoctor.clinicAddress;
         });
+      }
+
+      //=====View Previous Appointments=====//
+      if(previousAppointmentsDiv != null){
+        //TODO HERE
+        let prevAppointmentsData = await getUserData().prevAppointments;
+        if(prevAppointmentsData.length == 0){
+          var p = document.createElement('p');
+          p.className = "d-flex justify-content-center";
+          p.innerHTML = "<br/><br/>No Previous Appointments!";
+          previousAppointmentsDiv.appendChild(p);
+        }
+        else{
+          prevAppointmentsData.forEach(function(data, i){
+            var divCard = document.createElement('div');
+            var divCardBody = document.createElement('div');
+            var pCardBody = document.createElement('p');
+            var breakLine = document.createElement('br');
+           
+            pCardBody.innerHTML = data.date + " / " + data.clinicSelected;
+            divCard.className = "card";
+            divCardBody.className = "card-body";
+            pCardBody.className = "card-text";
+  
+            divCardBody.appendChild(pCardBody);
+            divCardBody.insertAdjacentHTML('beforeEnd','<a class="card-link" data-bs-toggle="modal" data-bs-target="#prevAppointmentModal" data-bs-index="' + i +'">More Details</a>');
+            divCard.appendChild(divCardBody);
+            previousAppointmentsDiv.appendChild(divCard);
+            previousAppointmentsDiv.appendChild(breakLine);
+          });
+
+          var prevAppointmentModal = document.getElementById('prevAppointmentModal')
+          prevAppointmentModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var index = button.getAttribute('data-bs-index');
+            var selectedAppointment = prevAppointmentsData[index];
+            var modalBodyInput = prevAppointmentModal.querySelector('.modal-body')
+            modalBodyInput.innerHTML = "Clinic: " + selectedAppointment.clinicSelected + "<br/>Date: " + selectedAppointment.date
+            + "<br/>Symptom: " + selectedAppointment.symptom + "<br/>Status: " + (selectedAppointment.approved ? "Approved" : "Declined");
+          });
+        }
       }
     }
   });
