@@ -46,33 +46,49 @@
     <a href="/pages/patient/homepage.html" class="btn btn-primary">&#60;</a>
 
     <!--MENU-->
-    <div class = "container my-5" style="width: 40rem;">
+    <div class = "container my-5" style="width: 40rem;" id="setAppointmentDiv">
         <h3>Google Calendar</h3>
         
         <!--ADD GOOGLE CALENDAR SIGN IN AND IFRAME HERE-->
-        <hr><div id="googleCalSignIn">
+        <hr><div id="googleCalSignInDiv">
             <div class="d-flex justify-content-center my-10"> 
                 <h6>You need to sign in to your google to show events.</h6>
             </div>
             <div class = "d-flex justify-content-center my-10">
-                <button class="btn btn-info" id="setAppointmentSubmitBtn">Sign-in</button>
+                <button id = "googleCalSignInBtn" class="btn btn-info" id="setAppointmentSubmitBtn">Sign-in</button>
             </div>
-        </div><hr>
+        </div>
+        <div class = "d-flex justify-content-center my-10" id="googleCalEventDiv"></div>
+        <div class = "d-flex justify-content-center my-10">
+            <button id = "googleCalSignOutBtn" class="btn btn-info" id="setAppointmentSubmitBtn">Logout</button>
+        </div>
+        <hr>
 
-        <form method="POST" id = "setAppointmentForm">
-            <div class="mb-3">
-                <label for="dateInput" class="form-label">Date and Time</label>
-                <input type="text" class="form-control" id="dateInput">
-            </div>
-            <div class="mb-3">
-                <label for="symptomInput" class="form-label">Symptom</label>
-                <textarea id="symptomInput" rows="5" cols="85"></textarea>
-            </div>
-            <div class = "d-flex justify-content-center my-10">
-                <button type="submit" class="btn btn-info" id="setAppointmentSubmitBtn">Submit</button>
-            </div>
-        </form>
+        <div class="mb-3">
+            <label for="dateInput" class="form-label">Date and Time</label>
+            <input type="datetime-local" class="form-control" id="dateInput">
+        </div>
+        <div class="mb-3">
+            <label for="clinicChooseSelect" class="form-label">Clinic</label>
+            <select id="clinicChooseSelect" class="form-control"></select>
+        </div>
+        <div class="mb-3">
+            <label for="symptomInput" class="form-label">Symptom</label>
+            <textarea id="symptomInput" rows="5" cols="85"></textarea>
+        </div>
+        <div class = "d-flex justify-content-center my-10">
+            <a class="btn btn-info" id="setAppointmentSubmitBtn">Submit</a>
+        </div>
+    </div>
 
+    <div class = "container my-5" style="width: 40rem;" id="pendingAppointmentDiv">
+        <h3 id="pendingStatusTitle">Pending response from</h3>
+        <h6 id="clinicDetailsPendingTitle">b</h6><br>
+        <p id="appointmentSchedulePendingPar">Schedule: </p>
+        <p id="appointmentSymptomPendingPar">Symptom: </p>
+        <p id="responseDetailsPar"></p>
+        <div class = "d-flex justify-content-center my-10">
+            <a class="btn btn-info" id="appointmentPendingBtn"></a>
         </div>
     </div>
 
@@ -82,6 +98,9 @@
     <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-storage.js"></script>
+
+    <!--GOOGLE CALENDAR-->
+    <script src="https://apis.google.com/js/api.js"></script>
 
     <!--MAIN-->
     <script type="module" src="/js/main.js"></script>
