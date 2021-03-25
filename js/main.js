@@ -182,10 +182,10 @@ if(loginForm != null){
     let email = document.getElementById('emailInput').value;
     let pass = document.getElementById('passwordInput').value;
     let warningText = document.getElementById('loginMessageWarning');
-    let auth = firebase.auth();
+    let auth = await firebase.auth();
 
     //Sign in
-    auth.signInWithEmailAndPassword(email, pass)
+    await auth.signInWithEmailAndPassword(email, pass)
     .then(async(userAuth) => {
       let collection;
       let data = await new Promise(resolve =>{
@@ -200,7 +200,6 @@ if(loginForm != null){
           }
         });
       });
-      
       storeData(data);
       gotoPage("homepage", getUserType());
     })
@@ -228,7 +227,7 @@ if (titleSignUp != null) {
 if(logoutBtn != null){
   logoutBtn.addEventListener('click', e=>{
     firebase.auth().signOut();
-    sessionStorage.clear();
+    localStorage.clear();
     gotoPage("index");
   });
 }
@@ -272,11 +271,11 @@ function getUserType(){
 
 //store data in storageSession for faster loading time
 function storeData(accountInfo){
-  sessionStorage.setItem("accountInfo",JSON.stringify(accountInfo));
+  localStorage.setItem("accountInfo",JSON.stringify(accountInfo));
 }
 
 function getUserData(){
-  return JSON.parse(sessionStorage.getItem("accountInfo"));
+  return JSON.parse(localStorage.getItem("accountInfo"));
 }
 
 async function reloadData(){
@@ -835,12 +834,15 @@ function showCalendar() {
 //----------FIREBASE REALTIME LISTENER----------//
 firebase.auth().onAuthStateChanged(user =>{
   if(user){
-    if(getCurrentPage() == "index" || getCurrentPage() == "login" || getCurrentPage() == "signup"){
+    if((getCurrentPage() == "index" || getCurrentPage() == "login" || getCurrentPage() == "signup") && getUserData() != null){
       gotoPage("homepage", getUserType());
     }
     console.log("logged in" + user.uid);
   }
   else{
+    if(getCurrentPage() != "index" && getCurrentPage() != "login" && getCurrentPage() != "signup"){
+      gotoPage("index");
+    }
     console.log("not logged in");
   }
 });
