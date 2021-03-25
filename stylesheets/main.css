@@ -48,5 +48,9 @@ a {
 }
 
 #logo {
-  width: 5%;
+  width: 50px;
+}
+
+.nav-logo {
+  align-items: center;
 }
