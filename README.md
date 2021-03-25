@@ -19,7 +19,6 @@ Use Localhost by using Live Server via Visual Studio Code
 8. At the end, save the file Ctrl+s.
 9. On the bottom-right you will see a button "Go Live", click it and the project is now on localhost.
 10. Instead of 127.0.0.1:5000, change the link into localhost:5500
-
 ```
 
 * Using Python3

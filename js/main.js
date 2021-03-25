@@ -606,13 +606,14 @@ function changePageDetails(){
           previousAppointmentsDiv.appendChild(p);
         }
         else{
-          prevAppointmentsData.forEach(function(data, i){
+          prevAppointmentsData.forEach(async(data, i)=>{
             var divCard = document.createElement('div');
             var divCardBody = document.createElement('div');
             var pCardBody = document.createElement('p');
             var breakLine = document.createElement('br');
+            var patientData = await getPatientData(data.patientUid);
            
-            pCardBody.innerHTML = data.date + " / " + data.clinicSelected;
+            pCardBody.innerHTML = data.date + " / " + ((getUserType() == "Patient") ? data.clinicSelected : patientData.name);
             divCard.className = "card";
             divCardBody.className = "card-body";
             pCardBody.className = "card-text";
@@ -644,9 +645,15 @@ function changePageDetails(){
         let aprroveAppointmentBtn = document.getElementById('aprroveAppointmentBtn');
         let declineAppointmentBtn = document.getElementById('declineAppointmentBtn');
         let finishAppointmentBtn = document.getElementById('finishAppointmentBtn');
+        let schedAppointmentPendingTitle = document.getElementById('schedAppointmentPendingTitle');
+        let schedAppointmentApprovedTitle = document.getElementById('schedAppointmentApprovedTitle');
+        let pendingAppointmentCount = 0;
+        let approvedAppointmentCount = 0;
 
         let currentModalIndex = 0;
         if(appointmentsData.length == 0){
+          schedAppointmentPendingTitle.style = "display:none;";
+          schedAppointmentApprovedTitle.style = "display:none;";
           var p = document.createElement('p');
           p.className = "d-flex justify-content-center";
           p.innerHTML = "<br/><br/>No Appointments!";
@@ -672,8 +679,13 @@ function changePageDetails(){
               divCard.appendChild(divCardBody);
               schedAppointmentPendingDiv.appendChild(divCard);
               schedAppointmentPendingDiv.appendChild(breakLine);
+              pendingAppointmentCount++;
             }
           });
+          if(pendingAppointmentCount == 0){
+            schedAppointmentPendingTitle.style = "display:none;";
+          }
+
           //GET APPROVED
           appointmentsData.forEach(async(data, i)=>{
             if(data.approved && data.viewed){
@@ -692,9 +704,13 @@ function changePageDetails(){
               divCard.appendChild(divCardBody);
               schedAppointmentApprovedDiv.appendChild(divCard);
               schedAppointmentApprovedDiv.appendChild(breakLine);
+              approvedAppointmentCount++;
             }
           });
-
+          if(schedAppointmentApprovedTitle == 0){
+            schedAppointmentApprovedTitle.style = "display:none;";
+          }
+          
           //PENDING APPOINTMENT MODAL
           var schedAppointmentPendingModal = document.getElementById('schedAppointmentPendingModal')
           schedAppointmentPendingModal.addEventListener('show.bs.modal', function (event) {
