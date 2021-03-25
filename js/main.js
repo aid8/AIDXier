@@ -2,9 +2,9 @@
   = CHECK ALL FIELDS IN SIGN UP IS FILLED UP AND ADD NOTIFICATION TO USER
   = ADD NOTIFICATION IN LOGIN
   = IN SETTING APPOINTMENTS, ADD AS WELL TO GOOGLE CALENDAR, CHECK IF DATE AND TIME WILL CONFLICT
-  = ADD GOOGLE MAP API
   = DO NOT DIRECTLY GO TO LOGIN.HTML, must have ?patient or ?doc
   = IF LOGGED IN, DO NOT GO TO LOGIN.HTML nor signup, vice versa
+  = ADD OWN APPOINTMENT ID ON BOTH PATIENTS AND MP
 */
 
 const config = {
@@ -55,6 +55,7 @@ const setAppointmentSubmitBtn = document.querySelector('#setAppointmentSubmitBtn
 const pendingAppointmentDiv = document.querySelector('#pendingAppointmentDiv');
 const browseClinicsDiv = document.querySelector('#browseClinicsDiv');
 const previousAppointmentsDiv = document.querySelector('#previousAppointmentsDiv');
+const schedAppointmentDiv = document.querySelector('#schedAppointmentDiv');
 
 //----------USERS SIGN UP----------//
 if (signUpForm != null) {
@@ -303,28 +304,81 @@ async function getDoctorInfos(){
   return doctors;
 }
 
-async function addAppointment(date, symptom, clinicSelected){
+async function getDoctorData(uid){
+  let data = await new Promise(resolve =>{
+    firestore.collection("doc-accounts-info").doc(uid).get().then((doc)=>{
+      if(doc.exists){
+        resolve(doc.data());
+      }
+    }
+  )});
+  return data;
+}
+
+async function getPatientData(uid){
+  let data = await new Promise(resolve =>{
+    firestore.collection("patient-accounts-info").doc(uid).get().then((doc)=>{
+      if(doc.exists){
+        resolve(doc.data());
+      }
+    }
+  )});
+  return data;
+}
+
+async function addAppointment(date, symptom, clinicSelected, docSelected){
   let userData = getUserData();
+  let docData = await getDoctorData(docSelected);
   let dataRef = await firebase.firestore().collection('patient-accounts-info').doc(userData.uid);
+  let dataRefDoc = await firebase.firestore().collection('doc-accounts-info').doc(docSelected);
   let currentAppointments = userData.appointments;
-  currentAppointments.push(JSON.parse(JSON.stringify({
+  let currentDocAppointments = docData.appointments;
+  let appointmentNow = JSON.parse(JSON.stringify({
     date,
     symptom,
     clinicSelected,
+    docSelected,
     viewed: false,
     approved: false,
     patientUid: userData.uid,
     details:""
-  })));
-  dataRef.update({appointments: currentAppointments});
+  }));
+  currentAppointments.push(appointmentNow);
+  currentDocAppointments.push(appointmentNow);
+  await dataRef.update({appointments: currentAppointments});
+  await dataRefDoc.update({appointments: currentDocAppointments})
   await reloadData();
   reloadPage();
+}
+
+async function approveAppointmentPatient(uid, details, approved){
+  let patientData = await getPatientData(uid);
+  let dataRef = await firebase.firestore().collection('patient-accounts-info').doc(uid);
+  let appointmentChange = patientData.appointments;
+  //ADD OWN APPOINTMENT ID SOON SINCE THERE WILL BE MULTIPLE APPOINTMENTS
+  appointmentChange[0].details = details;
+  appointmentChange[0].approved = approved;
+  appointmentChange[0].viewed = true;
+  console.log(details);
+  await dataRef.update({appointments: appointmentChange});
+}
+
+async function finishAppointmentPatient(uid, approved){
+  let dataRef = await firebase.firestore().collection('patient-accounts-info').doc(uid);
+  let patientData = await getPatientData(uid);
+  let prevAppointmentsChange = patientData.prevAppointments;
+  if(approved) prevAppointmentsChange.push(patientData.appointments[0]);
+  //ADD OWN APPOINTMENT ID SOON SINCE THERE WILL BE MULTIPLE APPOINTMENTS
+  await dataRef.update({
+    appointments: [],
+    prevAppointments: prevAppointmentsChange
+  });
 }
 
 //Soon add functions that will be able to cancel multiple appointments
 async function cancelAppointment(){
   let dataRef = await firebase.firestore().collection('patient-accounts-info').doc(getUserData().uid);
-  dataRef.update({appointments: []});
+  await dataRef.update({appointments: []});
   await reloadData();
   reloadPage();
 }
@@ -367,14 +421,36 @@ function changePageDetails(){
       if(setAppointmentDiv != null){
         if(setAppointmentDiv.style.display != 'none'){
           let clinicChooseSelect = document.getElementById('clinicChooseSelect');
+          let docChooseSelect = document.getElementById('docChooseSelect');
           let date = document.getElementById('dateInput');
           let symptom = document.getElementById('symptomInput');
           let clinics = await getClinics();
+          var doctors = await getDoctorInfos();
+
           clinics.forEach(clinic =>{
             var option = document.createElement("option");
             option.text = clinic;
             option.value = clinic;
             clinicChooseSelect.add(option);
+          });
+
+          function updateDocChooseSelect(){
+            docChooseSelect.innerHTML = '';
+            doctors.forEach(docs=>{
+              let selected = clinicChooseSelect.options[clinicChooseSelect.selectedIndex];
+              let clinicSel = selected.getAttribute("value");
+              if(docs.clinicName == clinicSel){
+                var option = document.createElement("option");
+                option.text = docs.name;
+                option.value = docs.uid;
+                docChooseSelect.add(option);
+              }
+            });
+          }
+          updateDocChooseSelect();
+
+          clinicChooseSelect.addEventListener("change", e=>{
+            updateDocChooseSelect()
           });
 
           googleCalSignOutBtn.style.display = 'none';
@@ -383,16 +459,18 @@ function changePageDetails(){
     
           setAppointmentSubmitBtn.addEventListener('click', async(e) =>{
             e.preventDefault();
-            let selectOption = clinicChooseSelect.options[clinicChooseSelect.selectedIndex];
-            let clinicSelected = selectOption.getAttribute("value");
-            await addAppointment(date.value,symptom.value,clinicSelected);
+            let selectClinincOption = clinicChooseSelect.options[clinicChooseSelect.selectedIndex];
+            let clinicSelected = selectClinincOption.getAttribute("value");
+            let selectDocOption = docChooseSelect.options[docChooseSelect.selectedIndex];
+            let docSelected = selectDocOption.getAttribute("value");
+            await addAppointment(date.value,symptom.value,clinicSelected,docSelected);
           });
         }
       }
 
       if(pendingAppointmentDiv != null){
         if(pendingAppointmentDiv.style.display != 'none'){
-          reloadData();
+          await reloadData();
           let pendingStatusTitle = document.getElementById('pendingStatusTitle');
           let clinicDetailsPendingTitle = document.getElementById('clinicDetailsPendingTitle');
           let appointmentSchedulePendingPar = document.getElementById('appointmentSchedulePendingPar');
@@ -491,10 +569,148 @@ function changePageDetails(){
             var selectedAppointment = prevAppointmentsData[index];
             var modalBodyInput = prevAppointmentModal.querySelector('.modal-body')
             modalBodyInput.innerHTML = "Clinic: " + selectedAppointment.clinicSelected + "<br/>Date: " + selectedAppointment.date
-            + "<br/>Symptom: " + selectedAppointment.symptom + "<br/>Status: " + (selectedAppointment.approved ? "Approved" : "Declined");
+            + "<br/>Symptom: " + selectedAppointment.symptom + "<br/>Details: " + selectedAppointment.details;
           });
         }
       }
+
+      //======Scheduled Appointments=====//
+      if(schedAppointmentDiv != null){
+        let appointmentsData = await getUserData().appointments;
+        let schedAppointmentPendingDiv = document.getElementById('schedAppointmentPendingDiv');
+        let schedAppointmentApprovedDiv = document.getElementById('schedAppointmentApprovedDiv');
+        let aprroveAppointmentBtn = document.getElementById('aprroveAppointmentBtn');
+        let declineAppointmentBtn = document.getElementById('declineAppointmentBtn');
+        let finishAppointmentBtn = document.getElementById('finishAppointmentBtn');
+
+        let currentModalIndex = 0;
+        if(appointmentsData.length == 0){
+          var p = document.createElement('p');
+          p.className = "d-flex justify-content-center";
+          p.innerHTML = "<br/><br/>No Appointments!";
+          schedAppointmentDiv.appendChild(p);
+        }
+        else{
+          //GET PENDING
+          appointmentsData.forEach(async(data, i)=>{
+            if(!data.viewed){
+              let patientData = await getPatientData(data.patientUid);
+              var divCard = document.createElement('div');
+              var divCardBody = document.createElement('div');
+              var pCardBody = document.createElement('p');
+              var breakLine = document.createElement('br');
+              
+              pCardBody.innerHTML = patientData.name + " / " + data.date;
+              divCard.className = "card";
+              divCardBody.className = "card-body";
+              pCardBody.className = "card-text";
+              
+              divCardBody.appendChild(pCardBody);
+              divCardBody.insertAdjacentHTML('beforeEnd','<a class="card-link" data-bs-toggle="modal" data-bs-target="#schedAppointmentPendingModal" data-bs-index="' + i +'">More Details</a>');
+              divCard.appendChild(divCardBody);
+              schedAppointmentPendingDiv.appendChild(divCard);
+              schedAppointmentPendingDiv.appendChild(breakLine);
+            }
+          });
+          //GET APPROVED
+          appointmentsData.forEach(async(data, i)=>{
+            if(data.approved && data.viewed){
+              let patientData = await getPatientData(data.patientUid);
+              var divCard = document.createElement('div');
+              var divCardBody = document.createElement('div');
+              var pCardBody = document.createElement('p');
+              var breakLine = document.createElement('br');
+              pCardBody.innerHTML = patientData.name + " / " + data.date;
+              divCard.className = "card";
+              divCardBody.className = "card-body";
+              pCardBody.className = "card-text";
+              
+              divCardBody.appendChild(pCardBody);
+              divCardBody.insertAdjacentHTML('beforeEnd','<a class="card-link" data-bs-toggle="modal" data-bs-target="#schedAppointmentApprovedModal" data-bs-index="' + i +'">More Details</a>');
+              divCard.appendChild(divCardBody);
+              schedAppointmentApprovedDiv.appendChild(divCard);
+              schedAppointmentApprovedDiv.appendChild(breakLine);
+            }
+          });
+
+          //PENDING APPOINTMENT MODAL
+          var schedAppointmentPendingModal = document.getElementById('schedAppointmentPendingModal')
+          schedAppointmentPendingModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var index = button.getAttribute('data-bs-index');
+            var selectedAppointment = appointmentsData[index];
+            var modalBodyInput = schedAppointmentPendingModal.querySelector('.modal-body');
+            modalBodyInput.innerHTML = "<div class='mb-3'> Clinic: " + selectedAppointment.clinicSelected + "<br/>Date: " + selectedAppointment.date
+            + "<br/>Symptom: " + selectedAppointment.symptom + "</div> <label for='detailTextArea' class='form-label'>Diagnosis:</label>"
+            + "<textarea id='detailTextArea' class='form-control' rows='5'></textarea>";
+            currentModalIndex = index;
+          });
+        }
+
+        //APPROVE BTN
+        aprroveAppointmentBtn.addEventListener('click', async(e) =>{
+          let detailTextArea = document.getElementById('detailTextArea');
+          await approveAppointmentPatient(appointmentsData[currentModalIndex].patientUid, detailTextArea.value, true);
+          let dataRef = await firebase.firestore().collection('doc-accounts-info').doc(getUserData().uid);
+          appointmentsData[currentModalIndex].details = detailTextArea.value;
+          appointmentsData[currentModalIndex].approved = true;
+          appointmentsData[currentModalIndex].viewed = true;
+          await dataRef.update({appointments: appointmentsData});
+          await reloadData();
+          reloadPage();
+        });
+
+        //DECILNE BTN
+        declineAppointmentBtn.addEventListener('click', async(e) =>{
+          let detailTextArea = document.getElementById('detailTextArea');
+          let patientUid = appointmentsData[currentModalIndex].patientUid;
+          let dataRef = await firebase.firestore().collection('patient-accounts-info').doc(patientUid);
+          let dataDocRef = await firebase.firestore().collection('doc-accounts-info').doc(getUserData().uid);
+          let patientData = await getPatientData(patientUid);
+          let appointmentsChange = patientData.appointments;
+          let appointmentsDocChange = getUserData().appointments;
+
+          appointmentsChange[0].details = detailTextArea.value;
+          appointmentsChange[0].approved = false;
+          appointmentsChange[0].viewed = true;
+
+          appointmentsDocChange.splice(currentModalIndex, 1);
+          dataDocRef.update({appointments: appointmentsDocChange});
+
+          await dataRef.update({appointments: appointmentsChange});
+          await reloadData();
+          reloadPage();
+        });
+        
+        //APPROVED APPOINTMENT MODAL
+        var schedAppointmentApprovedModal = document.getElementById('schedAppointmentApprovedModal')
+        schedAppointmentApprovedModal.addEventListener('show.bs.modal', function (event) {
+          var button = event.relatedTarget;
+          var index = button.getAttribute('data-bs-index');
+          var selectedAppointment = appointmentsData[index];
+          var modalBodyInput = schedAppointmentApprovedModal.querySelector('.modal-body');
+          modalBodyInput.innerHTML = "Clinic: " + selectedAppointment.clinicSelected + "<br/>Date: " + selectedAppointment.date
+          + "<br/>Symptom: " + selectedAppointment.symptom + "<br/>Diagnosis: " + selectedAppointment.details;
+          currentModalIndex = index;
+        });
+
+        //FINISH BTN
+        finishAppointmentBtn.addEventListener('click', async(e) =>{
+          await finishAppointmentPatient(appointmentsData[currentModalIndex].patientUid, true);
+          let dataRef = await firebase.firestore().collection('doc-accounts-info').doc(getUserData().uid);
+          let prevAppointmentsData = await getUserData().prevAppointments;
+          prevAppointmentsData.push(appointmentsData[currentModalIndex]);
+          appointmentsData.splice(currentModalIndex, 1);
+          await dataRef.update({
+            appointments: appointmentsData,
+            prevAppointments: prevAppointmentsData
+          });
+          await reloadData();
+          reloadPage();
+        });
+
+      }
+      //END
     }
   });
 }
