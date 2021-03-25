@@ -54,6 +54,7 @@ const googleCalEventDiv = document.querySelector('#googleCalEventDiv');
 const setAppointmentSubmitBtn = document.querySelector('#setAppointmentSubmitBtn');
 const pendingAppointmentDiv = document.querySelector('#pendingAppointmentDiv');
 const browseClinicsDiv = document.querySelector('#browseClinicsDiv');
+const patientsMedicalRecordDiv = document.querySelector('#patientsMedicalRecordDiv');
 const previousAppointmentsDiv = document.querySelector('#previousAppointmentsDiv');
 const schedAppointmentDiv = document.querySelector('#schedAppointmentDiv');
 
@@ -512,7 +513,7 @@ function changePageDetails(){
           pCardBody.className = "card-text";
 
           divCardBody.appendChild(pCardBody);
-          divCardBody.insertAdjacentHTML('beforeEnd','<a class="card-link" data-bs-toggle="modal" data-bs-target="#clinicDetailModal" data-bs-index="' + i +'">More Details</a>');
+          divCardBody.insertAdjacentHTML('beforeEnd','<a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clinicDetailModal" data-bs-index="' + i +'">More Details</a>');
           divCard.appendChild(divCardBody);
           browseClinicsDiv.appendChild(divCard);
           browseClinicsDiv.appendChild(breakLine);
@@ -531,6 +532,59 @@ function changePageDetails(){
           modalTitle.textContent = selectedDoctor.clinicName;
           modalBodyInput.innerHTML = "Doctor: " + selectedDoctor.name + "<br/>Address: " + selectedDoctor.clinicAddress;
         });
+      }
+
+      //=====Patients' Medical Records=====//
+      if(patientsMedicalRecordDiv != null){
+        let appointmentCheckRecord = getUserData().appointments;
+        let recordsCount = 0;
+        appointmentCheckRecord.forEach(async(record, i)=>{
+          if(record.approved){
+            recordsCount++;
+            var divCard = document.createElement('div');
+            var divCardBody = document.createElement('div');
+            var pCardBody = document.createElement('p');
+            var breakLine = document.createElement('br');
+
+            var patientData = await getPatientData(record.patientUid);
+
+            pCardBody.innerHTML = patientData.name + ", " + patientData.age;
+            divCard.className = "card";
+            divCardBody.className = "card-body";
+            pCardBody.className = "card-text";
+
+            divCardBody.appendChild(pCardBody);
+            divCardBody.insertAdjacentHTML('beforeEnd','<a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#patientsMedicalRecordModal" data-bs-index="' + i + '" data-bs-data="' + patientData.record +'">View Record</a>');
+            divCard.appendChild(divCardBody);
+            patientsMedicalRecordDiv.appendChild(divCard);
+            patientsMedicalRecordDiv.appendChild(breakLine);
+          }
+        });
+
+        if(recordsCount == 0){
+          var p = document.createElement('p');
+          p.className = "d-flex justify-content-center";
+          p.innerHTML = "<br/><br/>No Patient Medical Record Found!";
+          patientsMedicalRecordDiv.appendChild(p);
+        }
+        else{
+          var patientsMedicalRecordModal = document.getElementById('patientsMedicalRecordModal')
+          patientsMedicalRecordModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var image = button.getAttribute('data-bs-data');
+            var index = button.getAttribute('data-bs-index');
+            var modalTitle = patientsMedicalRecordModal.querySelector('.modal-title');
+            var modalBodyInput = patientsMedicalRecordModal.querySelector('.modal-body');
+
+            modalTitle.textContent = "Patients' Medical Record";
+            modalBodyInput.innerHTML = "<div class='container' id='patientMedicalRecord"+ index + "' style='width:600px; height:800px;'></div>";
+            console.log(modalBodyInput.innerHTML);
+            let imgContainer = document.getElementById('patientMedicalRecord'+index);
+            imgContainer.style.backgroundRepeat = "no-repeat";
+            imgContainer.style.backgroundSize = "100% 100%";
+            imgContainer.style.backgroundImage = "url(" + image + ")";
+          });
+        }
       }
 
       //=====View Previous Appointments=====//
@@ -556,7 +610,7 @@ function changePageDetails(){
             pCardBody.className = "card-text";
   
             divCardBody.appendChild(pCardBody);
-            divCardBody.insertAdjacentHTML('beforeEnd','<a class="card-link" data-bs-toggle="modal" data-bs-target="#prevAppointmentModal" data-bs-index="' + i +'">More Details</a>');
+            divCardBody.insertAdjacentHTML('beforeEnd','<a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#prevAppointmentModal" data-bs-index="' + i +'">More Details</a>');
             divCard.appendChild(divCardBody);
             previousAppointmentsDiv.appendChild(divCard);
             previousAppointmentsDiv.appendChild(breakLine);
@@ -606,7 +660,7 @@ function changePageDetails(){
               pCardBody.className = "card-text";
               
               divCardBody.appendChild(pCardBody);
-              divCardBody.insertAdjacentHTML('beforeEnd','<a class="card-link" data-bs-toggle="modal" data-bs-target="#schedAppointmentPendingModal" data-bs-index="' + i +'">More Details</a>');
+              divCardBody.insertAdjacentHTML('beforeEnd','<a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#schedAppointmentPendingModal" data-bs-index="' + i +'">More Details</a>');
               divCard.appendChild(divCardBody);
               schedAppointmentPendingDiv.appendChild(divCard);
               schedAppointmentPendingDiv.appendChild(breakLine);
@@ -626,7 +680,7 @@ function changePageDetails(){
               pCardBody.className = "card-text";
               
               divCardBody.appendChild(pCardBody);
-              divCardBody.insertAdjacentHTML('beforeEnd','<a class="card-link" data-bs-toggle="modal" data-bs-target="#schedAppointmentApprovedModal" data-bs-index="' + i +'">More Details</a>');
+              divCardBody.insertAdjacentHTML('beforeEnd','<a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#schedAppointmentApprovedModal" data-bs-index="' + i +'">More Details</a>');
               divCard.appendChild(divCardBody);
               schedAppointmentApprovedDiv.appendChild(divCard);
               schedAppointmentApprovedDiv.appendChild(breakLine);

@@ -1,17 +1,59 @@
 .main-menu {
     text-align: center;
     margin: 5% 20% 5% 20%;
-  }
-  
-  #logout-button {
-    margin-top: 100px;
-  }
-  
-  .menu-items {
-    margin-top: 25px;
-  }
-  
-  .btn {
-    border-radius: 25px;
-    margin-top: 10px;
-  }
+}
+
+#logout-button {
+  margin-top: 100px;
+}
+
+.menu-items {
+  margin-top: 25px;
+}
+
+.btn {
+  border-radius: 25px;
+  margin-top: 10px;
+}
+
+.btn[data-name="logout"]{
+  width: 50%;
+}
+
+.card[data-name="homepage"]{
+  border-radius: 20px;
+  margin: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+  font-size: 20px;
+}
+
+p {
+  text-decoration: none;
+  color: black;
+  font-size: 20px;
+}
+
+.menu-img {
+  width: 50%;
+  margin: 20px;
+  height: auto;
+}
+
+#container {
+  width: 100%;
+  text-align: center;
+}
+
+#container > div {
+  width: calc(100% / 6);
+  display: inline-block;
+  vertical-align: top;
+  border: 1px solid red;
+  text-align: center;
+  margin: 2%;
+  padding: 20px;
+}
