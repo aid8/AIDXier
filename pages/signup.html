@@ -28,13 +28,14 @@
         <form method="POST" id = "signUpForm">
             <div class="mb-3">
                 <h1 class="card-title" id="titleSignUp">SIGN UP AS PATIENT</h1>
+                <p class="warning" style="display:none;" id="signUpMessageWarning">Please input all fields!</p>
             </div>
             <div class="mb-3">
                 <label for="nameInput" class="form-label">Name</label>
                 <input type="text" class="form-control" id="nameInput" placeholder="Last Name, First Name">
             </div>
             <div class="mb-3">
-                <p class = "form-label">Gender</p>
+                <p class = "form-label" style="font-size: 15px;">Gender</p>
                 <input type="radio" id="genderMaleInput" value = "male" name="gender">
                 <label for="genderMaleInput" class="form-label">Male</label>
                 <input type="radio" id="genderFemaleInput" value = "female" name="gender">

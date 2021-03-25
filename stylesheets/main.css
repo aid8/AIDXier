@@ -37,6 +37,18 @@ p {
   font-size: 20px;
 }
 
+p.warning{
+  color: red;
+  font-size: 15px;
+}
+
+p.asterisk{
+  color: red;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
 .menu-img {
   width: 50%;
   margin: 20px;

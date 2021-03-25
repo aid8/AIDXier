@@ -29,3 +29,5 @@ Use Localhost by using Live Server via Visual Studio Code
 3. Type the command: python -m http.server 5500
 4. Open your browser and type localhost:5500/index.html
 ```
+
+You can check out the deployed site at: [AIDXier](https://aidxier.netlify.app/)

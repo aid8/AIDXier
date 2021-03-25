@@ -83,10 +83,16 @@ if (signUpForm != null) {
     let contact = document.getElementById('contactInput').value;
     let record = document.getElementById('recordInput').files[0];
     let auth = firebase.auth();
-    let fieldsOk = true;
+    //let fieldsOk = true;
+    let signUpWarning = document.getElementById('signUpMessageWarning');
     
     //TODO : CHECK IF ALL FIELDS ARE OK
-    if(fieldsOk){
+    if(name && age && gender && email && pass && contact && record){
+      if(getUserType() == "Doc" && !clinicName && !clinicAddress){
+        signUpWarning.style = "display:block;";
+        return;
+      }
+      
       //Show Progess Bar
       progressHandlerForm.style.display = 'block';
 
@@ -163,6 +169,7 @@ if (signUpForm != null) {
     else{
       //If there is a missing field or data
       //ADD a warning
+      signUpWarning.style = "display:block;";
       console.log('Please Input all fields!');
     }
   });
@@ -174,6 +181,7 @@ if(loginForm != null){
     e.preventDefault(); //Prevent refresh
     let email = document.getElementById('emailInput').value;
     let pass = document.getElementById('passwordInput').value;
+    let warningText = document.getElementById('loginMessageWarning');
     let auth = firebase.auth();
 
     //Sign in
@@ -198,6 +206,7 @@ if(loginForm != null){
     })
     //if account not found
     .catch(function(ce){
+      warningText.style = "display: block;";
       console.log(ce.message);
     });
   });
@@ -244,8 +253,8 @@ function gotoPage(page, accountType){
 //Only showing the current link
 //Fix if needed
 function getCurrentPage(){
-  let loc = window.location.href;
-  console.log(loc);
+  let loc = window.location.href.split('/');
+  return loc[loc.length-1].split('.')[0];
 }
 
 function reloadPage(){
@@ -826,6 +835,9 @@ function showCalendar() {
 //----------FIREBASE REALTIME LISTENER----------//
 firebase.auth().onAuthStateChanged(user =>{
   if(user){
+    if(getCurrentPage() == "index" || getCurrentPage() == "login" || getCurrentPage() == "signup"){
+      gotoPage("homepage", getUserType());
+    }
     console.log("logged in" + user.uid);
   }
   else{
