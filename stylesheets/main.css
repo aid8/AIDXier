@@ -42,3 +42,11 @@ a {
   margin: 2%;
   padding: 20px;
 }
+
+.navbar {
+  background-color: #1fd5e200;
+}
+
+#logo {
+  width: 5%;
+}
