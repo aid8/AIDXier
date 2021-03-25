@@ -681,11 +681,14 @@ function changePageDetails(){
               schedAppointmentPendingDiv.appendChild(breakLine);
               pendingAppointmentCount++;
             }
+            if(i == appointmentsData.length-1){
+              console.log(pendingAppointmentCount);
+              if(pendingAppointmentCount == 0){
+                schedAppointmentPendingTitle.style = "display:none;";
+              }
+            }
           });
-          if(pendingAppointmentCount == 0){
-            schedAppointmentPendingTitle.style = "display:none;";
-          }
-
+          
           //GET APPROVED
           appointmentsData.forEach(async(data, i)=>{
             if(data.approved && data.viewed){
@@ -706,10 +709,13 @@ function changePageDetails(){
               schedAppointmentApprovedDiv.appendChild(breakLine);
               approvedAppointmentCount++;
             }
+            if(i == appointmentsData.length-1){
+              if(approvedAppointmentCount == 0){
+                schedAppointmentApprovedTitle.style = "display:none;";
+              }
+            }
           });
-          if(schedAppointmentApprovedTitle == 0){
-            schedAppointmentApprovedTitle.style = "display:none;";
-          }
+          
           
           //PENDING APPOINTMENT MODAL
           var schedAppointmentPendingModal = document.getElementById('schedAppointmentPendingModal')
