@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIDXier</title>
+
+    <!--BOOTSTRAP-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+      crossorigin="anonymous"
+    ></script>
+
+    <!--MAIN CSS-->
+    <link href="/stylesheets/main.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <!--NAVBAR-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">AIDXier</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="homepage.html"
+                >Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">About</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!--BACK BUTTON-->
+    <a href="/pages/patient/homepage.html" class="btn btn-primary">&#60;</a>
+
+    <!--MENU-->
+    <div class="container my-5" style="width: 40rem">
+      <h3>Emergency Contact Numbers</h3>
+      <hr />
+      <div class="row menu-items">
+        <button
+          type="button"
+          class="btn btn-outline-danger btn-block p-3"
+          data-bs-toggle="modal"
+          data-bs-target="#hospitalModal"
+        >
+          <h5 class="card-title">Naga City Hospital</h5>
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-danger btn-block p-3"
+          data-bs-toggle="modal"
+          data-bs-target="#bfpModal"
+        >
+          <h5 class="card-title">Bureau of Fire Protection</h5>
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-danger btn-block p-3"
+          data-bs-toggle="modal"
+          data-bs-target="#pnpModal"
+        >
+          <h5 class="card-title">Philippine National Police</h5>
+        </button>
+      </div>
+    </div>
+
+    <!-- HOSPITAL MODAL -->
+    <div
+      class="modal fade"
+      id="hospitalModal"
+      tabindex="-1"
+      aria-labelledby="hospitalModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="hospitalModal">Naga City Hospital</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <h6 class="card-text">
+              Address: Peñafrancia Ave, Baranagay Peñafrancia, Naga, 4400
+              Camarines Sur
+            </h6>
+            <hr />
+            <h6 class="card-subtitle mb-2 text-muted">
+              Telephone Number: (054) 472 0464
+            </h6>
+            <hr />
+            <h6>Google Maps:</h6>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15509.873532407135!2d123.1899316!3d13.6292483!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x603f4a569051e90f!2sNaga%20City%20Hospital!5e0!3m2!1sen!2sph!4v1616441359522!5m2!1sen!2sph"
+              width="465"
+              height="450"
+              style="border: 0"
+              allowfullscreen=""
+              loading="lazy"
+            ></iframe>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BFP MODAL -->
+    <div
+      class="modal fade"
+      id="bfpModal"
+      tabindex="-1"
+      aria-labelledby="bfpModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="bfpModal">Bureau of Fire Protection</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <h6 class="card-text">
+              Address: J Miranda Ave, Naga City, 4400 Camarines Sur
+            </h6>
+            <hr />
+            <h6 class="card-subtitle mb-2 text-muted">
+              Telephone Number: (054) 473 8473
+            </h6>
+            <hr />
+            <h6>Google Maps:</h6>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m23!1m12!1m3!1d124081.2022424297!2d123.12958846637993!3d13.625031199159041!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m0!4m5!1s0x33a18d94bc1c184f%3A0x534640052ef6db2f!2sbfp%20naga%20city!3m2!1d13.625041!2d123.19962899999999!5e0!3m2!1sen!2sph!4v1616441616290!5m2!1sen!2sph"
+              width="465"
+              height="450"
+              style="border: 0"
+              allowfullscreen=""
+              loading="lazy"
+            ></iframe>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PNP MODAL -->
+    <div
+      class="modal fade"
+      id="pnpModal"
+      tabindex="-1"
+      aria-labelledby="pnpModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="pnpModal">
+              Philippine National Police
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <h6 class="card-text">
+              Address: Panganiban Drive, Naga City, 4400 Camarines Sur
+            </h6>
+            <hr />
+            <h6 class="card-subtitle mb-2 text-muted">
+              Telephone Number: (054) 811 1823
+            </h6>
+            <hr />
+            <h6>Google Maps:</h6>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m23!1m12!1m3!1d124083.37393777703!2d123.13070946633135!3d13.620893401907672!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m0!4m5!1s0x33a18cce44e98c33%3A0x6f5a7ca8f16a4b99!2sNAGA%20CITY%20POLICE%20OFFICE%2C%20Panganiban%20Drive%2C%20Naga%20City%2C%204400!3m2!1d13.620903199999999!2d123.20075!5e0!3m2!1sen!2sph!4v1616441968983!5m2!1sen!2sph"
+              width="465"
+              height="450"
+              style="border: 0"
+              allowfullscreen=""
+              loading="lazy"
+            ></iframe>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--SCRIPTS-->
+    <!--FIREBASE-->
+    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-storage.js"></script>
+
+    <!--MAIN-->
+    <script type="module" src="/js/main.js"></script>
+  </body>
+</html>
