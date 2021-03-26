@@ -544,6 +544,7 @@ function changePageDetails(){
 
       //=====Patients' Medical Records=====//
       if(patientsMedicalRecordDiv != null){
+        await reloadData();
         let appointmentCheckRecord = getUserData().appointments;
         let recordsCount = 0;
         appointmentCheckRecord.forEach(async(record, i)=>{
@@ -598,6 +599,7 @@ function changePageDetails(){
       //=====View Previous Appointments=====//
       if(previousAppointmentsDiv != null){
         //TODO HERE
+        await reloadData();
         let prevAppointmentsData = await getUserData().prevAppointments;
         if(prevAppointmentsData.length == 0){
           var p = document.createElement('p');
@@ -639,6 +641,7 @@ function changePageDetails(){
 
       //======Scheduled Appointments=====//
       if(schedAppointmentDiv != null){
+        await reloadData();
         let appointmentsData = await getUserData().appointments;
         let schedAppointmentPendingDiv = document.getElementById('schedAppointmentPendingDiv');
         let schedAppointmentApprovedDiv = document.getElementById('schedAppointmentApprovedDiv');
@@ -682,7 +685,6 @@ function changePageDetails(){
               pendingAppointmentCount++;
             }
             if(i == appointmentsData.length-1){
-              console.log(pendingAppointmentCount);
               if(pendingAppointmentCount == 0){
                 schedAppointmentPendingTitle.style = "display:none;";
               }
